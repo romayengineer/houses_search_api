@@ -202,12 +202,19 @@ def download_s3_csv():
 @app.route('/properties', methods=['GET'])
 def get_house_by_property():
     query = House.query
+
+    status = request.args.get('status', type=str)
+    if status is None:
+        return jsonify({"error": "The 'status' argument is required."}),
+    query = query.filter(House.status == status)
+
     min_price = request.args.get('min_price', type=float)
     max_price = request.args.get('max_price', type=float)
     min_bed = request.args.get('min_bed', type=int)
     max_bed = request.args.get('max_bed', type=int)
     min_bath = request.args.get('min_bath', type=int)
     max_bath = request.args.get('max_bath', type=int)
+
     if min_price is not None:
         query = query.filter(House.price >= min_price)
     if max_price is not None:
