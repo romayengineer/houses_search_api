@@ -237,8 +237,9 @@ def get_house_by_property():
 
     query = filter_by_exact_match(query, "city", type=str)
     query = filter_by_exact_match(query, "state", type=str)
-    query = filter_by_exact_match(query, "state_code", type=str)
     query = filter_by_exact_match(query, "zip_code", type=str)
+    # state_code is required for demographics search
+    query = filter_by_exact_match(query, "state_code", type=str)
 
     # supports pagination
     page = request.args.get('page', 1, type=int)
