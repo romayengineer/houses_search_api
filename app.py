@@ -222,6 +222,10 @@ def get_house_by_property():
     query = filter_by_range(query, "price", float)
     query = filter_by_range(query, "bed", int)
     query = filter_by_range(query, "bath", int)
+    query = filter_by_range(query, "acre_lot", int)
+    query = filter_by_range(query, "price_per_acre", int)
+    query = filter_by_range(query, "house_size", int)
+    query = filter_by_range(query, "price_per_sqft", int)
 
     # supports pagination
     page = request.args.get('page', 1, type=int)
