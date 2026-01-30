@@ -2,6 +2,7 @@ import os
 import csv
 import hashlib
 import sqlite3
+import requests
 from flask import Flask
 from flask_sqlalchemy import SQLAlchemy
 
@@ -99,12 +100,6 @@ def to_float(number):
     except ValueError:
         return None
 
-def to_int(number):
-    try:
-        return int(number)
-    except ValueError:
-        return None
-
 def db_optimization(cursor):
     # Disables rollback log
     cursor.execute("PRAGMA journal_mode = OFF;")
@@ -191,6 +186,18 @@ def import_csv():
 
         print(f"Import finished: {count_added} added")
 
+@app.cli.command("download-csv")
+def download_s3_csv():
+    url = "https://getgloby-realtor-challenge.s3.us-east-1.amazonaws.com/realtor-data.csv"
+    dest_path = "realtor-data.csv"
+    print(f"Downloading {url}...")
+    # stream=True allows us to download the file in pieces
+    with requests.get(url, stream=True) as r:
+        r.raise_for_status()
+        with open(dest_path, 'wb') as f:
+            for chunk in r.iter_content(chunk_size=8192): 
+                f.write(chunk)
+    print(f"Download complete: {dest_path}")
 
 if __name__ == '__main__':
     app.run(debug=True)
