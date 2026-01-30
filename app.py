@@ -245,6 +245,14 @@ def get_house_by_property():
     per_page = request.args.get('per_page', 20, type=int)
     pagination = query.paginate(page=page, per_page=per_page, max_per_page=500)
 
+    #TODO add demographic search parameters
+    # - `min_population`
+    # - `max_population`
+    # - `min_median_income`
+    # - `max_median_income`
+    # - `min_median_age`
+    # - `max_median_age`
+
     return jsonify({
         "total": pagination.total,
         "pages": pagination.pages,
