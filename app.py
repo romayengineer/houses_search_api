@@ -300,5 +300,10 @@ def get_property_by_id(house_id):
 
     return jsonify(house_to_dict(house))
 
+@app.rounte('/demographics/<string:zip_code>', methods=['GET'])
+def get_demographic(zip_code):
+    #TODO create demographic table to cache results
+    pass
+
 if __name__ == '__main__':
     app.run(debug=True)
