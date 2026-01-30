@@ -218,6 +218,26 @@ def filter_by_exact_match(query, name, type):
 
     return query
 
+def house_to_dict(house):
+    return {
+        "id": house.id,
+        "brokered_by": house.brokered_by,
+        "status": house.status,
+        "price": house.price,
+        "bed": house.bed,
+        "bath": house.bath,
+        "acre_lot": house.acre_lot,
+        "street": house.street,
+        "city": house.city,
+        "state": house.state,
+        "zip_code": house.zip_code,
+        "house_size": house.house_size,
+        "prev_sold_date": house.prev_sold_date,
+        "state_code": house.state_code,
+        "price_per_acre": house.price_per_acre,
+        "price_per_sq_ft": house.price_per_sq_ft,
+    }
+
 @app.route('/properties', methods=['GET'])
 def get_house_by_property():
     query = House.query
@@ -260,26 +280,25 @@ def get_house_by_property():
         "current_page": pagination.page,
         "per_page": pagination.per_page,
         "results": [
-            {
-                "id": h.id,
-                "brokered_by": h.brokered_by,
-                "status": h.status,
-                "price": h.price,
-                "bed": h.bed,
-                "bath": h.bath,
-                "acre_lot": h.acre_lot,
-                "street": h.street,
-                "city": h.city,
-                "state": h.state,
-                "zip_code": h.zip_code,
-                "house_size": h.house_size,
-                "prev_sold_date": h.prev_sold_date,
-                "state_code": h.state_code,
-                "price_per_acre": h.price_per_acre,
-                "price_per_sq_ft": h.price_per_sq_ft,
-            } for h in pagination.items
+            house_to_dict(h) for h in pagination.items
         ]
     })
+
+@app.route('/properties/<string:house_id>', methods=['GET'])
+def get_property_by_id(house_id):
+    house = House.query.get(house_id)
+
+    if not house:
+        return jsonify({"error": "Property not found"}), 404
+
+    #TODO add zip info
+    # "zip_info": {
+    #    "median_income": ...,
+    #    "population": ...,
+    #    "median_age": ...
+    # }
+
+    return jsonify(house_to_dict(house))
 
 if __name__ == '__main__':
     app.run(debug=True)
