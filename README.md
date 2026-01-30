@@ -26,6 +26,14 @@ pip install -r requirements
 flask init-db
 ```
 
+## download the CSV file
+
+```sh
+flask download-csv
+```
+
+it downloads the file into `realtor-data.csv`
+
 ## Import CSV file
 
 the csv file has to be in the root of the app and have the name `realtor-data.csv`
