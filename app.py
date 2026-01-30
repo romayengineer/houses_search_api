@@ -204,8 +204,8 @@ def get_house_by_property():
     query = House.query
 
     status = request.args.get('status', type=str)
-    if status is None:
-        return jsonify({"error": "The 'status' argument is required."}),
+    if not status:
+        return jsonify({"error": "The 'status' argument is required."}), 400
     query = query.filter(House.status == status)
 
     min_price = request.args.get('min_price', type=float)
