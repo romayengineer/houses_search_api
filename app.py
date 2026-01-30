@@ -210,6 +210,14 @@ def filter_by_range(query, name, type):
 
     return query
 
+def filter_by_exact_match(query, name, type):
+    value = request.args.get(name, type=type)
+
+    if value is not None:
+        query = query.filter(getattr(House, name) == value)
+
+    return query
+
 @app.route('/properties', methods=['GET'])
 def get_house_by_property():
     query = House.query
@@ -227,21 +235,10 @@ def get_house_by_property():
     query = filter_by_range(query, "house_size", int)
     query = filter_by_range(query, "price_per_sqft", int)
 
-    city = request.args.get("city", type=str)
-    if city is not None:
-        query = query.filter(House.city == city)
-
-    state = request.args.get("state", type=str)
-    if state is not None:
-        query = query.filter(House.state == state)
-
-    state_code = request.args.get("state_code", type=str)
-    if state_code is not None:
-        query = query.filter(House.state_code == state_code)
-
-    zip_code = request.args.get("zip_code", type=str)
-    if zip_code is not None:
-        query = query.filter(House.zip_code == zip_code)
+    query = filter_by_exact_match(query, "city", type=str)
+    query = filter_by_exact_match(query, "state", type=str)
+    query = filter_by_exact_match(query, "state_code", type=str)
+    query = filter_by_exact_match(query, "zip_code", type=str)
 
     # supports pagination
     page = request.args.get('page', 1, type=int)
