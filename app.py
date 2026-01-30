@@ -3,7 +3,7 @@ import csv
 import hashlib
 import sqlite3
 import requests
-from flask import Flask
+from flask import Flask, request, jsonify
 from flask_sqlalchemy import SQLAlchemy
 
 state_map = {
@@ -198,6 +198,58 @@ def download_s3_csv():
             for chunk in r.iter_content(chunk_size=8192): 
                 f.write(chunk)
     print(f"Download complete: {dest_path}")
+
+@app.route('/properties', methods=['GET'])
+def get_house_by_property():
+    query = House.query
+    min_price = request.args.get('min_price', type=float)
+    max_price = request.args.get('max_price', type=float)
+    min_bed = request.args.get('min_bed', type=int)
+    max_bed = request.args.get('max_bed', type=int)
+    min_bath = request.args.get('min_bath', type=int)
+    max_bath = request.args.get('max_bath', type=int)
+    if min_price is not None:
+        query = query.filter(House.price >= min_price)
+    if max_price is not None:
+        query = query.filter(House.price <= max_price)
+    if min_bed is not None:
+        query = query.filter(House.bed >= min_bed)
+    if max_bed is not None:
+        query = query.filter(House.bed <= max_bed)
+    if min_bath is not None:
+        query = query.filter(House.bath >= min_bath)
+    if max_bath is not None:
+        query = query.filter(House.bath <= max_bath)
+    # supports pagination
+    page = request.args.get('page', 1, type=int)
+    per_page = request.args.get('per_page', 20, type=int)
+    pagination = query.paginate(page=page, per_page=per_page, max_per_page=500)
+    return jsonify({
+        "total": pagination.total,
+        "pages": pagination.pages,
+        "current_page": pagination.page,
+        "per_page": pagination.per_page,
+        "results": [
+            {
+                "id": h.id,
+                "brokered_by": h.brokered_by,
+                "status": h.status,
+                "price": h.price,
+                "bed": h.bed,
+                "bath": h.bath,
+                "acre_lot": h.acre_lot,
+                "street": h.street,
+                "city": h.city,
+                "state": h.state,
+                "zip_code": h.zip_code,
+                "house_size": h.house_size,
+                "prev_sold_date": h.prev_sold_date,
+                "state_code": h.state_code,
+                "price_per_acre": h.price_per_acre,
+                "price_per_sq_ft": h.price_per_sq_ft,
+            } for h in pagination.items
+        ]
+    })
 
 if __name__ == '__main__':
     app.run(debug=True)
