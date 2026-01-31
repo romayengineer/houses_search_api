@@ -309,6 +309,23 @@ def get_property_by_id(house_id):
 
     return jsonify(house_to_dict(house))
 
+def parse_table(table_cells):
+    parsed = []
+    # there are 17 attributes (rows in the table)
+    # and there are 3 columns for each
+    # therefore there are 51 cells in total
+    cells_count = len(table_cells)
+    if cells_count == 51:
+        i = 1
+        for number in table_cells:
+            # we only care about the second column
+            # and the cells that falls into the second column
+            # is always 2 + 3n for example 2, 5, 8, 11
+            if (i - 2) % 3 == 0:
+                parsed.append(number)
+            i += 1
+    return parsed
+
 @app.route('/demographics/<string:zip_code>', methods=['GET'])
 def get_demographic(zip_code):
     url_arguments = urlencode({
@@ -325,20 +342,7 @@ def get_demographic(zip_code):
         table_content = page.inner_html("div#details_table")
         tree = html.fromstring(table_content)
         table_cells = tree.xpath("//td/text()")
-        parsed = []
-        # there are 17 attributes (rows in the table)
-        # and there are 3 columns for each
-        # therefore there are 51 cells in total
-        cells_count = len(table_cells)
-        if cells_count == 51:
-            i = 1
-            for number in table_cells:
-                # we only care about the second column
-                # and the cells that falls into the second column
-                # is always 2 + 3n for example 2, 5, 8, 11
-                if (i - 2) % 3 == 0:
-                    parsed.append(number)
-                i += 1
+        parsed = parse_table(table_cells)
         #TODO parse the details table and insert into Demographic
         return jsonify({
             "parsed_cells": parsed,
