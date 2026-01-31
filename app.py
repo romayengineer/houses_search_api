@@ -3,8 +3,10 @@ import csv
 import hashlib
 import sqlite3
 import requests
+from urllib.parse import urlencode
 from flask import Flask, request, jsonify
 from flask_sqlalchemy import SQLAlchemy
+from playwright.sync_api import sync_playwright
 
 state_map = {
     "Alabama": "AL",
@@ -87,6 +89,12 @@ class House(db.Model):
     # calculated columns
     price_per_acre = db.Column(db.Float)
     price_per_sq_ft = db.Column(db.Float)
+
+class Demographic(db.Model):
+    zip_code = db.Column(db.String(10), primary_key=True, unique=True)
+    median_income = db.Column(db.Float)
+    population = db.Column(db.Float)
+    median_age = db.Column(db.Float)
 
 @app.cli.command("init-db")
 def init_db():
@@ -300,10 +308,24 @@ def get_property_by_id(house_id):
 
     return jsonify(house_to_dict(house))
 
-@app.rounte('/demographics/<string:zip_code>', methods=['GET'])
+@app.route('/demographics/<string:zip_code>', methods=['GET'])
 def get_demographic(zip_code):
-    #TODO create demographic table to cache results
-    pass
+    url_arguments = urlencode({
+        "zip": zip_code,
+        "mode": "zip",
+    })
+    full_url = f"https://zipwho.com/?{url_arguments}"
+
+    with sync_playwright() as p:
+        browser = p.chromium.launch(headless=True)
+        page = browser.new_page()
+        page.goto(full_url)
+        page.wait_for_selector("div#details_table", timeout=10000)
+        content = page.content()
+        #TODO parse the details table and insert into Demographic
+        return jsonify({
+            "content": content,
+        })
 
 if __name__ == '__main__':
     app.run(debug=True)
