@@ -305,10 +305,7 @@ def build_filters_argument(args):
 
 def get_zips_by_demographics():
     zips = []
-    # as requirements only filters by demographics if state_code is given
     state = request.args.get("state_code")
-    if state is None:
-        return
     filters = build_filters_argument(request.args)
     url_arguments = urlencode({
         "filters": filters,
@@ -364,15 +361,10 @@ def get_house_by_property():
     # state_code is required for demographics search
     query = filter_by_exact_match(query, "state_code", type=str)
 
+    # as requirements only filters by demographics if state_code is given
     if request.args.get("state_code") is not None:
-        #TODO add demographic search parameters
-        # - `min_population`
-        # - `max_population`
-        # - `min_median_income`
-        # - `max_median_income`
-        # - `min_median_age`
-        # - `max_median_age`
-        pass
+        zips = get_zips_by_demographics()
+        query = query.filter(House.zip_code.in_(zips))
 
     # supports pagination
     page = request.args.get('page', 1, type=int)
