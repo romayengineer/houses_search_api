@@ -340,14 +340,13 @@ def get_property_by_id(house_id):
     if not house:
         return jsonify({"error": "Property not found"}), 404
 
-    #TODO add zip info
-    # "zip_info": {
-    #    "median_income": ...,
-    #    "population": ...,
-    #    "median_age": ...
-    # }
+    response = house_to_dict(house)
 
-    return jsonify(house_to_dict(house))
+    demographic = get_demographic(house.zip_code)
+    if demographic:
+        response["zip_info"] = demographic
+
+    return jsonify(response)
 
 def table_values(table_cells):
     # there are 17 attributes (rows in the table)
