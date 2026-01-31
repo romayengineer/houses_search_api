@@ -333,7 +333,7 @@ table_attributes = [
     label.lower().replace(" ", "_") for label in table_labels
 ]
 
-def parse_table(table_cells):
+def table_values(table_cells):
     # there are 17 attributes (rows in the table)
     # and there are 3 columns for each
     # therefore there are 51 cells in total
@@ -348,7 +348,10 @@ def parse_table(table_cells):
             if (i - 2) % 3 == 0:
                 parsed.append(number)
             i += 1
-        return dict(zip(table_attributes, parsed))
+        return parsed
+
+def table_parse(values):
+    return dict(zip(table_attributes, values))
 
 @app.route('/demographics/<string:zip_code>', methods=['GET'])
 def get_demographic(zip_code):
@@ -366,9 +369,13 @@ def get_demographic(zip_code):
         table_content = page.inner_html("div#details_table")
         tree = html.fromstring(table_content)
         table_cells = tree.xpath("//td/text()")
-        parsed = parse_table(table_cells)
-        parsed["zip_code"] = zip_code
-        return jsonify(parsed)
+        values = table_values(table_cells)
+        if values:
+            parsed = table_parse(values)
+            parsed["zip_code"] = zip_code
+            return jsonify({"result": parsed})
+        else:
+            return jsonify({"error": f"no data found for zip_code {zip_code}"}), 404
 
 if __name__ == '__main__':
     app.run(debug=True)
