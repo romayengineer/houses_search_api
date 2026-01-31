@@ -407,9 +407,8 @@ def demographic_to_dict(demographic):
         "zip_code": demographic.zip_code,
     }
 
-@app.route('/demographics/<string:zip_code>', methods=['GET'])
 def get_demographic(zip_code):
-    demographic = Demographic.get(zip_code)
+    demographic = Demographic.query.get(zip_code)
     if demographic:
         return demographic_to_dict(demographic)
     table_cells = get_result_table_cells(zip_code)
@@ -421,7 +420,13 @@ def get_demographic(zip_code):
             new_demographic = Demographic(**parsed)
             db.session.add(new_demographic)
             db.session.commit()
-        return jsonify({"result": parsed})
+        return parsed
+
+@app.route('/demographics/<string:zip_code>', methods=['GET'])
+def api_get_demographic(zip_code):
+    demographic = get_demographic(zip_code)
+    if demographic:
+        return jsonify({"result": demographic})
     else:
         return jsonify({"error": f"no data found for zip_code {zip_code}"}), 404
 
