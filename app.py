@@ -421,6 +421,14 @@ def get_demographic(zip_code):
             db.session.add(new_demographic)
             db.session.commit()
         return parsed
+    else:
+        with suppress(IntegrityError):
+            # insert demographic without any values
+            # so that next time it returns immediately
+            new_demographic = Demographic(zip_code=zip_code)
+            db.session.add(new_demographic)
+            db.session.commit()
+
 
 @app.route('/demographics/<string:zip_code>', methods=['GET'])
 def api_get_demographic(zip_code):
