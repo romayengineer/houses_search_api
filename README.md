@@ -20,6 +20,12 @@ source venv/bin/activate
 pip install -r requirements
 ```
 
+4. install playwrignt and cromium
+
+```sh
+playwright install chromium
+```
+
 ## Create database
 
 ```sh

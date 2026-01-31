@@ -1,3 +1,4 @@
+lxml
 playwright
 requests
 flask
