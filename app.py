@@ -94,8 +94,22 @@ class House(db.Model):
 class Demographic(db.Model):
     zip_code = db.Column(db.String(10), primary_key=True, unique=True)
     median_income = db.Column(db.Float)
+    cost_of_living_index = db.Column(db.Float)
+    median_mortgage_to_income_ratio = db.Column(db.Float)
+    owner_occupied_homes = db.Column(db.Float)
+    median_rooms_in_home = db.Column(db.Float)
+    college_degree = db.Column(db.Float)
+    professional = db.Column(db.Float)
     population = db.Column(db.Float)
+    average_household_size = db.Column(db.Float)
     median_age = db.Column(db.Float)
+    male_to_female_ratio = db.Column(db.Float)
+    married = db.Column(db.Float)
+    divorced = db.Column(db.Float)
+    white = db.Column(db.Float)
+    black = db.Column(db.Float)
+    asian = db.Column(db.Float)
+    hispanic_ethnicity = db.Column(db.Float)
 
 @app.cli.command("init-db")
 def init_db():
