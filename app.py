@@ -310,18 +310,21 @@ def get_house_by_property():
     # state_code is required for demographics search
     query = filter_by_exact_match(query, "state_code", type=str)
 
+    # as requirements only filters by demographics if state_code is sent
+    if request.args.get("state_code") is not None:
+        #TODO add demographic search parameters
+        # - `min_population`
+        # - `max_population`
+        # - `min_median_income`
+        # - `max_median_income`
+        # - `min_median_age`
+        # - `max_median_age`
+        pass
+
     # supports pagination
     page = request.args.get('page', 1, type=int)
     per_page = request.args.get('per_page', 20, type=int)
     pagination = query.paginate(page=page, per_page=per_page, max_per_page=500)
-
-    #TODO add demographic search parameters
-    # - `min_population`
-    # - `max_population`
-    # - `min_median_income`
-    # - `max_median_income`
-    # - `min_median_age`
-    # - `max_median_age`
 
     return jsonify({
         "total": pagination.total,
