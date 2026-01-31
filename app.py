@@ -353,14 +353,12 @@ def table_values(table_cells):
 def table_parse(values):
     return dict(zip(table_attributes, values))
 
-@app.route('/demographics/<string:zip_code>', methods=['GET'])
-def get_demographic(zip_code):
+def get_result_table_cells(zip_code):
     url_arguments = urlencode({
         "zip": zip_code,
         "mode": "zip",
     })
     full_url = f"https://zipwho.com/?{url_arguments}"
-
     with sync_playwright() as p:
         browser = p.chromium.launch(headless=True)
         page = browser.new_page()
@@ -369,13 +367,18 @@ def get_demographic(zip_code):
         table_content = page.inner_html("div#details_table")
         tree = html.fromstring(table_content)
         table_cells = tree.xpath("//td/text()")
-        values = table_values(table_cells)
-        if values:
-            parsed = table_parse(values)
-            parsed["zip_code"] = zip_code
-            return jsonify({"result": parsed})
-        else:
-            return jsonify({"error": f"no data found for zip_code {zip_code}"}), 404
+        return table_cells
+
+@app.route('/demographics/<string:zip_code>', methods=['GET'])
+def get_demographic(zip_code):
+    table_cells = get_result_table_cells(zip_code)
+    values = table_values(table_cells)
+    if values:
+        parsed = table_parse(values)
+        parsed["zip_code"] = zip_code
+        return jsonify({"result": parsed})
+    else:
+        return jsonify({"error": f"no data found for zip_code {zip_code}"}), 404
 
 if __name__ == '__main__':
     app.run(debug=True)
