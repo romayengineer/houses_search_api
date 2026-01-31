@@ -3,6 +3,7 @@ import csv
 import hashlib
 import sqlite3
 import requests
+from lxml import html
 from urllib.parse import urlencode
 from flask import Flask, request, jsonify
 from flask_sqlalchemy import SQLAlchemy
@@ -321,10 +322,26 @@ def get_demographic(zip_code):
         page = browser.new_page()
         page.goto(full_url)
         page.wait_for_selector("div#details_table", timeout=10000)
-        content = page.content()
+        table_content = page.inner_html("div#details_table")
+        tree = html.fromstring(table_content)
+        table_cells = tree.xpath("//td/text()")
+        parsed = []
+        # there are 17 attributes (rows in the table)
+        # and there are 3 columns for each
+        # therefore there are 51 cells in total
+        cells_count = len(table_cells)
+        if cells_count == 51:
+            i = 1
+            for number in table_cells:
+                # we only care about the second column
+                # and the cells that falls into the second column
+                # is always 2 + 3n for example 2, 5, 8, 11
+                if (i - 2) % 3 == 0:
+                    parsed.append(number)
+                i += 1
         #TODO parse the details table and insert into Demographic
         return jsonify({
-            "content": content,
+            "parsed_cells": parsed,
         })
 
 if __name__ == '__main__':
