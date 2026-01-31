@@ -11,6 +11,15 @@ from playwright.sync_api import sync_playwright
 from contextlib import suppress
 from sqlalchemy.exc import IntegrityError
 
+app = Flask(__name__)
+
+basedir = os.path.abspath(os.path.dirname(__file__))
+db_path = os.path.join(basedir, 'database.db')
+app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///' + db_path
+app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
+
+db = SQLAlchemy(app)
+
 state_map = {
     "Alabama": "AL",
     "Alaska": "AK",
@@ -64,14 +73,29 @@ state_map = {
     "Wyoming": "WY",
 }
 
-app = Flask(__name__)
+table_labels = [
+    "Median Income",
+    "Cost Of Living Index",
+    "Median Mortgage To Income Ratio",
+    "Owner Occupied Homes",
+    "Median Rooms In Home",
+    "College Degree",
+    "Professional",
+    "Population",
+    "Average Household Size",
+    "Median Age",
+    "Male To Female Ratio",
+    "Married",
+    "Divorced",
+    "White",
+    "Black",
+    "Asian",
+    "Hispanic Ethnicity",
+]
 
-basedir = os.path.abspath(os.path.dirname(__file__))
-db_path = os.path.join(basedir, 'database.db')
-app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///' + db_path
-app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
-
-db = SQLAlchemy(app)
+table_attributes = [
+    label.lower().replace(" ", "_") for label in table_labels
+]
 
 class House(db.Model):
     id = db.Column(db.String(120), primary_key=True, unique=True)
@@ -325,30 +349,6 @@ def get_property_by_id(house_id):
 
     return jsonify(house_to_dict(house))
 
-table_labels = [
-    "Median Income",
-    "Cost Of Living Index",
-    "Median Mortgage To Income Ratio",
-    "Owner Occupied Homes",
-    "Median Rooms In Home",
-    "College Degree",
-    "Professional",
-    "Population",
-    "Average Household Size",
-    "Median Age",
-    "Male To Female Ratio",
-    "Married",
-    "Divorced",
-    "White",
-    "Black",
-    "Asian",
-    "Hispanic Ethnicity",
-]
-
-table_attributes = [
-    label.lower().replace(" ", "_") for label in table_labels
-]
-
 def table_values(table_cells):
     # there are 17 attributes (rows in the table)
     # and there are 3 columns for each
@@ -426,7 +426,6 @@ def get_demographic(zip_code):
         db.session.commit()
     if values:
         return parsed
-
 
 @app.route('/demographics/<string:zip_code>', methods=['GET'])
 def api_get_demographic(zip_code):
