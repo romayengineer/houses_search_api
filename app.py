@@ -119,7 +119,7 @@ def init_db():
 
 def to_float(number):
     try:
-        return float(number)
+        return float(number.replace(",", "")) # remove ,
     except ValueError:
         return None
 
@@ -360,7 +360,7 @@ def table_values(table_cells):
             # and the cells that falls into the second column
             # is always 2 + 3n for example 2, 5, 8, 11
             if (i - 2) % 3 == 0:
-                parsed.append(number)
+                parsed.append(to_float(number))
             i += 1
         return parsed
 
@@ -390,6 +390,9 @@ def get_demographic(zip_code):
     if values:
         parsed = table_parse(values)
         parsed["zip_code"] = zip_code
+        new_demographic = Demographic(**parsed)
+        db.session.add(new_demographic)
+        db.session.commit()
         return jsonify({"result": parsed})
     else:
         return jsonify({"error": f"no data found for zip_code {zip_code}"}), 404
