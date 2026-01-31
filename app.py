@@ -8,6 +8,8 @@ from urllib.parse import urlencode
 from flask import Flask, request, jsonify
 from flask_sqlalchemy import SQLAlchemy
 from playwright.sync_api import sync_playwright
+from contextlib import suppress
+from sqlalchemy.exc import IntegrityError
 
 state_map = {
     "Alabama": "AL",
@@ -383,16 +385,42 @@ def get_result_table_cells(zip_code):
         table_cells = tree.xpath("//td/text()")
         return table_cells
 
+def demographic_to_dict(demographic):
+    return {
+        "median_income": demographic.median_income,
+        "cost_of_living_index": demographic.cost_of_living_index,
+        "median_mortgage_to_income_ratio": demographic.median_mortgage_to_income_ratio,
+        "owner_occupied_homes": demographic.owner_occupied_homes,
+        "median_rooms_in_home": demographic.median_rooms_in_home,
+        "college_degree": demographic.college_degree,
+        "professional": demographic.professional,
+        "population": demographic.population,
+        "average_household_size": demographic.average_household_size,
+        "median_age": demographic.median_age,
+        "male_to_female_ratio": demographic.male_to_female_ratio,
+        "married": demographic.married,
+        "divorced": demographic.divorced,
+        "white": demographic.white,
+        "black": demographic.black,
+        "asian": demographic.asian,
+        "hispanic_ethnicity": demographic.hispanic_ethnicity,
+        "zip_code": demographic.zip_code,
+    }
+
 @app.route('/demographics/<string:zip_code>', methods=['GET'])
 def get_demographic(zip_code):
+    demographic = Demographic.get(zip_code)
+    if demographic:
+        return demographic_to_dict(demographic)
     table_cells = get_result_table_cells(zip_code)
     values = table_values(table_cells)
     if values:
         parsed = table_parse(values)
         parsed["zip_code"] = zip_code
-        new_demographic = Demographic(**parsed)
-        db.session.add(new_demographic)
-        db.session.commit()
+        with suppress(IntegrityError):
+            new_demographic = Demographic(**parsed)
+            db.session.add(new_demographic)
+            db.session.commit()
         return jsonify({"result": parsed})
     else:
         return jsonify({"error": f"no data found for zip_code {zip_code}"}), 404
