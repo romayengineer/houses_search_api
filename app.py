@@ -3,18 +3,12 @@ import csv
 import hashlib
 import sqlite3
 import requests
-from flask import jsonify
+from flask import jsonify, request
 
 from conf import app, basedir, db_path, db, state_map, to_float
 from house import House, get_house_by_property, house_to_dict
 from demographic import get_demographic
 from zipwho import get_zips_by_demographics
-
-@app.cli.command("init-db")
-def init_db():
-    """Clear existing data and create new tables."""
-    db.create_all()
-    print("Database initialized!")
 
 def db_optimization(cursor):
     # Disables rollback log
@@ -31,6 +25,12 @@ def insert_house(cursor, buffer):
         "INSERT OR IGNORE INTO house (brokered_by, status, price, bed, bath, acre_lot, street, city, state, zip_code, house_size, prev_sold_date, state_code, price_per_acre, price_per_sq_ft, id) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)", 
         buffer
     )
+
+@app.cli.command("init-db")
+def command_init_db():
+    """Clear existing data and create new tables."""
+    db.create_all()
+    print("Database initialized!")
 
 @app.cli.command("import-csv")
 def import_csv():
@@ -117,7 +117,7 @@ def download_s3_csv():
 
 @app.route('/zips_by_demographics', methods=['GET'])
 def api_get_zips_by_demographics():
-    zips = get_zips_by_demographics()
+    zips = get_zips_by_demographics(request.args)
     if zips:
         return jsonify({"zips": [str(z) for z in zips]})
     else:

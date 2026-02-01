@@ -1,5 +1,4 @@
-
-from flask import request
+from functools import lru_cache
 from lxml import html
 from urllib.parse import urlencode
 from conf import to_float
@@ -46,10 +45,11 @@ def build_filters_argument(args):
             filters.append(f"{name}-{attr_min}-{attr_max}")
     return "_".join(filters)
 
-def get_zips_by_demographics():
+@lru_cache
+def get_zips_by_demographics(args):
     zips = []
-    state = request.args.get("state_code")
-    filters = build_filters_argument(request.args)
+    state = args.get("state_code")
+    filters = build_filters_argument(args)
     url_arguments = urlencode({
         "filters": filters,
         "state": state,
