@@ -57,6 +57,18 @@ flask import-csv  36,37s user 12,67s system 98% cpu 49,705 total
 
 ```sh
 pytest --cov=src
+
+
+Name                 Stmts   Miss  Cover
+----------------------------------------
+src/app.py             113    113     0%
+src/browser.py           8      6    25%
+src/conf.py             15      2    87%
+src/demographic.py      41      1    98%
+src/house.py            59     35    41%
+src/zipwho.py           52     15    71%
+----------------------------------------
+TOTAL                  288    172    40%
 ```
 
 ## API endpoints
