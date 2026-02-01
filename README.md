@@ -53,6 +53,12 @@ it takes 50 seconds to import +2 million rows
 Import finished: 2224561 added
 flask import-csv  36,37s user 12,67s system 98% cpu 49,705 total
 
+## Run tests
+
+```sh
+pytest --cov
+```
+
 ## API endpoints
 
 ### Search house by properties

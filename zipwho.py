@@ -2,8 +2,9 @@
 from flask import request
 from lxml import html
 from urllib.parse import urlencode
-from playwright.sync_api import sync_playwright
 from conf import to_float
+
+from browser import goto_and_select
 
 # this is what is displayed in the table
 table_labels = [
@@ -55,21 +56,16 @@ def get_zips_by_demographics():
         "mode": "demo",
     })
     full_url = f"https://zipwho.com/?{url_arguments}"
-    with sync_playwright() as p:
-        browser = p.chromium.launch(headless=True)
-        page = browser.new_page()
-        page.goto(full_url)
-        page.wait_for_selector("div#search_results_table", timeout=10000)
-        table_content = page.inner_html("div#search_results_table")
-        tree = html.fromstring(table_content)
-        table_rows = tree.xpath("//tr")
-        for row in table_rows:
-            row_cells = row.xpath("./td")
-            # if there are results the columns are more than 2
-            if len(row_cells) > 2:
-                link = row.xpath(".//a/text()")
-                if link:
-                    zips.append(link[0])
+    table_content = goto_and_select(full_url, "div#search_results_table")
+    tree = html.fromstring(table_content)
+    table_rows = tree.xpath("//tr")
+    for row in table_rows:
+        row_cells = row.xpath("./td")
+        # if there are results the columns are more than 2
+        if len(row_cells) > 2:
+            link = row.xpath(".//a/text()")
+            if link:
+                zips.append(link[0])
     return zips
 
 def get_result_table_cells(zip_code):
@@ -78,15 +74,10 @@ def get_result_table_cells(zip_code):
         "mode": "zip",
     })
     full_url = f"https://zipwho.com/?{url_arguments}"
-    with sync_playwright() as p:
-        browser = p.chromium.launch(headless=True)
-        page = browser.new_page()
-        page.goto(full_url)
-        page.wait_for_selector("div#details_table", timeout=10000)
-        table_content = page.inner_html("div#details_table")
-        tree = html.fromstring(table_content)
-        table_cells = tree.xpath("//td/text()")
-        return table_cells
+    table_content = goto_and_select(full_url, "div#details_table")
+    tree = html.fromstring(table_content)
+    table_cells = tree.xpath("//td/text()")
+    return table_cells
 
 def table_values(table_cells):
     # there are 17 attributes (rows in the table)
