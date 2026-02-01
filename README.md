@@ -20,7 +20,7 @@ source venv/bin/activate
 pip install -r requirements
 ```
 
-4. install playwrignt and cromium
+4. install playwrignt and chromium
 
 ```sh
 playwright install chromium
