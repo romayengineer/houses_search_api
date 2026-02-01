@@ -56,7 +56,7 @@ flask import-csv  36,37s user 12,67s system 98% cpu 49,705 total
 ## Run tests
 
 ```sh
-pytest --cov
+pytest --cov=src
 ```
 
 ## API endpoints
