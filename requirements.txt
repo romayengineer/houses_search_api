@@ -5,4 +5,5 @@ flask
 flask-sqlalchemy
 pytest
 pytest-cov
+pytest-mock
 python-dotenv
