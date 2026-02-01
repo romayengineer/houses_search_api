@@ -2,8 +2,8 @@ from functools import lru_cache
 from lxml import html
 from urllib.parse import urlencode
 
-from conf import to_float
-from browser import goto_and_select
+from src.conf import to_float
+from src.browser import goto_and_select
 
 # this is what is displayed in the table
 table_labels = [

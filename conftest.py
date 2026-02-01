@@ -1,14 +1,9 @@
-import os
-import sys
-
-sys.path.insert(0, os.path.join(os.getcwd(), "src"))
-
 import pytest
 
-from conf import app as flask_app
-from conf import db
-from house import House
-from demographic import Demographic
+from src.conf import app as flask_app
+from src.conf import db
+from src.house import House
+from src.demographic import Demographic
 
 @pytest.fixture
 def app():

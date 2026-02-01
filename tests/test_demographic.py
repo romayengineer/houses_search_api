@@ -1,4 +1,4 @@
-from demographic import get_demographic
+from src.demographic import get_demographic
 
 def test_get_demographics_1(app):
     demographic = get_demographic(123)
@@ -41,7 +41,7 @@ table_content = (
 ) % row_content
 
 def test_get_demographics_2(app, mocker):
-    goto_and_select = mocker.patch("zipwho.goto_and_select")
+    goto_and_select = mocker.patch("src.zipwho.goto_and_select")
     goto_and_select.return_value = table_content
     demographic = get_demographic(555)
     assert demographic == {

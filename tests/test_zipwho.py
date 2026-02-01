@@ -1,4 +1,4 @@
-from zipwho import build_filters_argument, table_values
+from src.zipwho import build_filters_argument, table_values
 
 def test_build_filters_argument():
     args = {

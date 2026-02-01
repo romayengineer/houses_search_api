@@ -1,8 +1,8 @@
 from contextlib import suppress
 from sqlalchemy.exc import IntegrityError
 
-from conf import db
-from zipwho import get_result_table_cells, table_values, table_parse
+from src.conf import db
+from src.zipwho import get_result_table_cells, table_values, table_parse
 
 class Demographic(db.Model):
     zip_code = db.Column(db.String(10), primary_key=True, unique=True)

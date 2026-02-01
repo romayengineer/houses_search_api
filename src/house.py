@@ -1,7 +1,7 @@
 from flask import request, jsonify
 
-from conf import db
-from zipwho import get_zips_by_demographics
+from src.conf import db
+from src.zipwho import get_zips_by_demographics
 
 class House(db.Model):
     id = db.Column(db.String(120), primary_key=True, unique=True)

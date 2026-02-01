@@ -5,10 +5,10 @@ import sqlite3
 import requests
 from flask import jsonify, request
 
-from conf import app, basedir, db_path, db, state_map, to_float
-from house import House, get_house_by_property, house_to_dict
-from demographic import get_demographic
-from zipwho import get_zips_by_demographics
+from src.conf import app, basedir, db_path, db, state_map, to_float
+from src.house import House, get_house_by_property, house_to_dict
+from src.demographic import get_demographic
+from src.zipwho import get_zips_by_demographics
 
 def db_optimization(cursor):
     # Disables rollback log
