@@ -23,24 +23,28 @@ class House(db.Model):
     price_per_acre = db.Column(db.Float)
     price_per_sq_ft = db.Column(db.Float)
 
+house_attrs = [
+    'acre_lot',
+    'bath',
+    'bed',
+    'brokered_by',
+    'city',
+    'house_size',
+    'id',
+    'prev_sold_date',
+    'price',
+    'price_per_acre',
+    'price_per_sq_ft',
+    'state',
+    'state_code',
+    'status',
+    'street',
+    'zip_code',
+]
+
 def house_to_dict(house):
     return {
-        "id": house.id,
-        "brokered_by": house.brokered_by,
-        "status": house.status,
-        "price": house.price,
-        "bed": house.bed,
-        "bath": house.bath,
-        "acre_lot": house.acre_lot,
-        "street": house.street,
-        "city": house.city,
-        "state": house.state,
-        "zip_code": house.zip_code,
-        "house_size": house.house_size,
-        "prev_sold_date": house.prev_sold_date,
-        "state_code": house.state_code,
-        "price_per_acre": house.price_per_acre,
-        "price_per_sq_ft": house.price_per_sq_ft,
+        k: getattr(house, k) for k in house_attrs
     }
 
 def filter_by_range(args, query, name, type):
