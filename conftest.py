@@ -16,11 +16,14 @@ def app():
     with flask_app.app_context():
         db.create_all()
 
-        h1 = House(id="hash1", status="for_sale", price=500000.0, bed=3)
-        h2 = House(id="hash2", status="for_sale", price=250000.0, bed=2)
-        d1 = Demographic(zip_code=123, median_income=123)
+        h1 = House(id="hash1", status="for_sale", price=100000.0, bed=1, zip_code=111)
+        h2 = House(id="hash2", status="for_sale", price=200000.0, bed=2, zip_code=222)
+        h3 = House(id="hash3", status="for_sale", price=300000.0, bed=3, zip_code=333)
+        d1 = Demographic(zip_code=111, median_income=111)
+        d2 = Demographic(zip_code=222, median_income=222)
+        # zip_code 333 does not exists in demographics
 
-        db.session.add_all([h1, h2, d1])
+        db.session.add_all([h1, h2, h3, d1, d2])
         db.session.commit()
 
         yield flask_app

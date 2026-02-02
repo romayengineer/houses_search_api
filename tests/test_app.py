@@ -53,16 +53,24 @@ def test_api_get_house_by_property(client, mocker):
         'total': 2,
         'results': [
             house_fill_with_none({
-                'id': 'hash1',
-                'bed': 3,
-                'price': 500000.0,
-                'status': 'for_sale',
-            }),
-            house_fill_with_none({
                 'id': 'hash2',
                 'bed': 2,
-                'price': 250000.0,
+                'price': 200000.0,
                 'status': 'for_sale',
+                'zip_code': '222',
+            }),
+            house_fill_with_none({
+                'id': 'hash3',
+                'bed': 3,
+                'price': 300000.0,
+                'status': 'for_sale',
+                'zip_code': '333',
             }),
         ],
     }
+
+def test_api_get_property_by_id(client, mocker):
+    goto_and_select = mocker.patch("src.zipwho.goto_and_select")
+    goto_and_select.return_value = ""
+    response = client.get("/properties/hash1")
+    assert response.status_code == 200

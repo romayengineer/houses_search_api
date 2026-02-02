@@ -137,7 +137,7 @@ def api_get_house_by_property():
     })
 
 @app.route('/properties/<string:house_id>', methods=['GET'])
-def get_property_by_id(house_id):
+def api_get_property_by_id(house_id):
     house = db.session.get(House, house_id)
 
     if not house:

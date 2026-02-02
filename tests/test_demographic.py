@@ -1,9 +1,9 @@
 from src.demographic import get_demographic
 
 def test_get_demographics_1(app):
-    demographic = get_demographic(123)
+    demographic = get_demographic(111)
     assert demographic == {
-        'median_income': 123.0,
+        'median_income': 111.0,
         'cost_of_living_index': None,
         'median_mortgage_to_income_ratio': None,
         'owner_occupied_homes': None,
@@ -20,7 +20,7 @@ def test_get_demographics_1(app):
         'black': None,
         'asian': None,
         'hispanic_ethnicity': None,
-        'zip_code': '123'
+        'zip_code': '111'
     }
 
 row_content = [

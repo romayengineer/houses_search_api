@@ -16,4 +16,4 @@ def test_get_house_by_property(app):
         "status": "for_sale",
     })
     houses = get_house_by_property(args)
-    assert [h.id for h in houses.items] == ["hash1", "hash2"]
+    assert [h.id for h in houses.items] == ["hash1", "hash2", "hash3"]
