@@ -1,7 +1,7 @@
 import pytest
 
-from src.conf import app as flask_app
-from src.conf import db
+from src.app import app as flask_app
+from src.app import db
 from src.house import House
 from src.demographic import Demographic
 

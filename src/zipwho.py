@@ -64,7 +64,7 @@ def get_zips_by_demographics(args):
         # if there are results the columns are more than 2
         if len(row_cells) > 2:
             link = row.xpath(".//a/text()")
-            if link:
+            if len(link) > 1:
                 zips.append(link[0])
     return zips
 
