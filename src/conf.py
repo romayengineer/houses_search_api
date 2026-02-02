@@ -1,13 +1,12 @@
-import os
 from flask import Flask
 from flask_sqlalchemy import SQLAlchemy
 
+from src.flask_config import config, basedir, db_path
+
 app = Flask(__name__)
 
-basedir = os.getcwd()
-db_path = os.path.join(basedir, 'database.db')
-app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///' + db_path
-app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
+for key, val in config.items():
+    app.config[key] = val
 
 db = SQLAlchemy(app)
 

@@ -1,4 +1,7 @@
 import pytest
+from src import flask_config
+flask_config.config["TESTING"] = True
+flask_config.config["SQLALCHEMY_DATABASE_URI"] = "sqlite:///:memory:"
 
 from src.app import app as flask_app
 from src.app import db
@@ -7,11 +10,6 @@ from src.demographic import Demographic
 
 @pytest.fixture
 def app():
-    # Setup: Force the app to use an in-memory database
-    flask_app.config.update({
-        "TESTING": True,
-        "SQLALCHEMY_DATABASE_URI": "sqlite:///:memory:",
-    })
 
     with flask_app.app_context():
         db.create_all()
