@@ -1,5 +1,7 @@
 # Houses Search API
 
+this is an assessment and this is the [requirements](https://www.notion.so/marketfully/Backend-challenge-2f600b66e098806dbcddcc0a69cb1bf6)
+
 ## How to install
 
 1. create virtual environment
