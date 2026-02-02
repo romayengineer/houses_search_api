@@ -84,6 +84,14 @@ src/zipwho.py           52      0   100%
 TOTAL                  289     87    70%
 ```
 
+## Run the API
+
+```sh
+python -m flask run
+```
+
+this runs on `http://127.0.0.1:5000`
+
 ## API endpoints
 
 ### List zip codes by demographics
