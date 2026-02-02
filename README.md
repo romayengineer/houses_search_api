@@ -202,6 +202,37 @@ curl "http://127.0.0.1:5000/properties/0000048afee0ea3f5d7232c5f06560830ccd2591e
 }
 ```
 
+### Get Demographic by zip_code
+
+```sh
+curl "http://127.0.0.1:5000/demographics/99516"
+```
+
+```json
+{
+  "result": {
+    "asian": 2.5,
+    "average_household_size": 3.0,
+    "black": 0.6,
+    "college_degree": 50.2,
+    "cost_of_living_index": 247.1,
+    "divorced": 6.9,
+    "hispanic_ethnicity": 2.6,
+    "male_to_female_ratio": 99.6,
+    "married": 71.7,
+    "median_age": 39.1,
+    "median_income": 96916.0,
+    "median_mortgage_to_income_ratio": 20.8,
+    "median_rooms_in_home": 7.3,
+    "owner_occupied_homes": 91.4,
+    "population": 21679.0,
+    "professional": 51.7,
+    "white": 88.1,
+    "zip_code": "99516"
+  }
+}
+```
+
 ## Features
 
 ### Imdepotent import
