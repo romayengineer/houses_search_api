@@ -24,26 +24,30 @@ class Demographic(db.Model):
     asian = db.Column(db.Float)
     hispanic_ethnicity = db.Column(db.Float)
 
+demographic_attrs = [
+    "median_income",
+    "cost_of_living_index",
+    "median_mortgage_to_income_ratio",
+    "owner_occupied_homes",
+    "median_rooms_in_home",
+    "college_degree",
+    "professional",
+    "population",
+    "average_household_size",
+    "median_age",
+    "male_to_female_ratio",
+    "married",
+    "divorced",
+    "white",
+    "black",
+    "asian",
+    "hispanic_ethnicity",
+    "zip_code",
+]
+
 def demographic_to_dict(demographic):
     return {
-        "median_income": demographic.median_income,
-        "cost_of_living_index": demographic.cost_of_living_index,
-        "median_mortgage_to_income_ratio": demographic.median_mortgage_to_income_ratio,
-        "owner_occupied_homes": demographic.owner_occupied_homes,
-        "median_rooms_in_home": demographic.median_rooms_in_home,
-        "college_degree": demographic.college_degree,
-        "professional": demographic.professional,
-        "population": demographic.population,
-        "average_household_size": demographic.average_household_size,
-        "median_age": demographic.median_age,
-        "male_to_female_ratio": demographic.male_to_female_ratio,
-        "married": demographic.married,
-        "divorced": demographic.divorced,
-        "white": demographic.white,
-        "black": demographic.black,
-        "asian": demographic.asian,
-        "hispanic_ethnicity": demographic.hispanic_ethnicity,
-        "zip_code": demographic.zip_code,
+        k: getattr(demographic, k) for k in demographic_attrs
     }
 
 def get_demographic(zip_code):

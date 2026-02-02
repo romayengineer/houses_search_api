@@ -1,4 +1,5 @@
 from src.house import house_attrs
+from src.demographic import demographic_attrs
 
 zips = ["111", "222", "333", "444"]
 
@@ -19,9 +20,9 @@ zips_table = (
     "</table>"
 ) % zips_table_content
 
-def house_fill_with_none(house):
-    new_house = {}
-    for attr in house_attrs:
+def fill_with_none(house, attrs):
+    new_house = house.copy()
+    for attr in attrs:
         new_house[attr] = house.get(attr)
     return new_house
 
@@ -52,20 +53,20 @@ def test_api_get_house_by_property(client, mocker):
         'per_page': 20,
         'total': 2,
         'results': [
-            house_fill_with_none({
+            fill_with_none({
                 'id': 'hash2',
                 'bed': 2,
                 'price': 200000.0,
                 'status': 'for_sale',
                 'zip_code': '222',
-            }),
-            house_fill_with_none({
+            }, house_attrs),
+            fill_with_none({
                 'id': 'hash3',
                 'bed': 3,
                 'price': 300000.0,
                 'status': 'for_sale',
                 'zip_code': '333',
-            }),
+            }, house_attrs),
         ],
     }
 
@@ -74,3 +75,14 @@ def test_api_get_property_by_id(client, mocker):
     goto_and_select.return_value = ""
     response = client.get("/properties/hash1")
     assert response.status_code == 200
+    assert response.json == fill_with_none({
+        'bed': 1,
+        'id': 'hash1',
+        'price': 100000.0,
+        'status': 'for_sale',
+        'zip_code': '111',
+        'zip_info': fill_with_none({
+            'median_income': 111.0,
+            'zip_code': '111'
+        }, demographic_attrs)
+    }, house_attrs)
