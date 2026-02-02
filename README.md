@@ -84,9 +84,13 @@ TOTAL                  289     87    70%
 
 ## API endpoints
 
-### Search house by properties
+### List zip codes by demographics
 
-for example
+```sh
+curl "http://127.0.0.1:5000/zips_by_demographics?state_code=AK&min_median_income=10000"
+```
+
+### List Houses by properties
 
 ```sh
 curl "http://127.0.0.1:5000/properties?min_price=500000&max_price=800000&min_bed=3&status=for_sale&state=California"
@@ -150,6 +154,53 @@ it also filters by demographic data and supports these arguments
 - `max_hispanic_ethnicity`
 - `min_zip_code`
 - `max_zip_code`
+
+### Get house by ID
+
+```sh
+curl "http://127.0.0.1:5000/properties/0000048afee0ea3f5d7232c5f06560830ccd2591ebc5d2c7f0c389c123d4c069"
+```
+
+```json
+{
+  "acre_lot": 55.8,
+  "bath": "",
+  "bed": "",
+  "brokered_by": "25449.0",
+  "city": "Jamestown",
+  "house_size": 0.0,
+  "id": "0000048afee0ea3f5d7232c5f06560830ccd2591ebc5d2c7f0c389c123d4c069",
+  "prev_sold_date": "2022-01-24",
+  "price": 79900.0,
+  "price_per_acre": 1431.899641577061,
+  "price_per_sq_ft": 0.0,
+  "state": "Tennessee",
+  "state_code": "TN",
+  "status": "sold",
+  "street": "1981876.0",
+  "zip_code": "38556",
+  "zip_info": {
+    "asian": 0.0,
+    "average_household_size": 2.4,
+    "black": 0.1,
+    "college_degree": 8.5,
+    "cost_of_living_index": 55.1,
+    "divorced": 13.8,
+    "hispanic_ethnicity": 0.6,
+    "male_to_female_ratio": 91.5,
+    "married": 61.4,
+    "median_age": 38.8,
+    "median_income": 21831.0,
+    "median_mortgage_to_income_ratio": 22.0,
+    "median_rooms_in_home": 5.1,
+    "owner_occupied_homes": 76.3,
+    "population": 11974.0,
+    "professional": 22.0,
+    "white": 98.7,
+    "zip_code": "38556"
+  }
+}
+```
 
 ## Features
 
