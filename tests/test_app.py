@@ -86,3 +86,15 @@ def test_api_get_property_by_id(client, mocker):
             'zip_code': '111'
         }, demographic_attrs)
     }, house_attrs)
+
+def test_api_get_demographic(client, mocker):
+    goto_and_select = mocker.patch("src.zipwho.goto_and_select")
+    goto_and_select.return_value = ""
+    response = client.get("/demographics/111")
+    assert response.status_code == 200
+    assert response.json == {
+        "result": fill_with_none({
+            'median_income': 111.0,
+            'zip_code': '111'
+        }, demographic_attrs),
+    }
