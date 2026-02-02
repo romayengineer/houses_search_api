@@ -68,13 +68,13 @@ def get_zips_by_demographics(args):
                 zips.append(link[0])
     return zips
 
-def get_result_table_cells(zip_code):
+def get_result_table_cells(zip_code, page=None):
     url_arguments = urlencode({
         "zip": zip_code,
         "mode": "zip",
     })
     full_url = f"https://zipwho.com/?{url_arguments}"
-    table_content = goto_and_select(full_url, "div#details_table")
+    table_content = goto_and_select(full_url, "div#details_table", page=page)
     tree = html.fromstring(table_content)
     table_cells = tree.xpath("//td/text()")
     return table_cells

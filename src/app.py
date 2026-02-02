@@ -4,11 +4,13 @@ import hashlib
 import sqlite3
 import requests
 from flask import jsonify, request
+from sqlalchemy import select, distinct
 
 from src.conf import app, basedir, db_path, db, state_map, to_float
 from src.house import House, get_house_by_property, house_to_dict
 from src.demographic import get_demographic
 from src.zipwho import get_zips_by_demographics
+from src.browser import sync_playwright
 
 def db_optimization(cursor):
     # Disables rollback log
@@ -33,7 +35,7 @@ def command_init_db():
     print("Database initialized!")
 
 @app.cli.command("import-csv")
-def import_csv():
+def command_import_csv():
     conn = sqlite3.connect(db_path)
     cursor = conn.cursor()
     db_optimization(cursor)
@@ -103,7 +105,7 @@ def import_csv():
         print(f"Import finished: {count_added} added")
 
 @app.cli.command("download-csv")
-def download_s3_csv():
+def command_download_s3_csv():
     url = "https://getgloby-realtor-challenge.s3.us-east-1.amazonaws.com/realtor-data.csv"
     dest_path = os.path.join(basedir, "realtor-data.csv")
     print(f"Downloading {url}...")
@@ -158,6 +160,19 @@ def api_get_demographic(zip_code):
         return jsonify({"result": demographic})
     else:
         return jsonify({"error": f"no data found for zip_code {zip_code}"}), 404
+
+@app.cli.command("scrap-zip")
+def command_scrap_zip():
+    stmt = select(distinct(House.zip_code))
+    zip_codes = db.session.execute(stmt).scalars()
+    with sync_playwright() as p:
+        browser = p.chromium.launch(headless=True)
+        page = browser.new_page()
+        for zip_code in zip_codes:
+            # it reuses the same browser and page
+            # object to scrap the zip code
+            demographic = get_demographic(zip_code, page)
+            print(zip_code, demographic)
 
 if __name__ == '__main__':
     app.run(debug=True)

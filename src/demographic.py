@@ -50,11 +50,13 @@ def demographic_to_dict(demographic):
         k: getattr(demographic, k) for k in demographic_attrs
     }
 
-def get_demographic(zip_code):
+def get_demographic(zip_code, page=None):
     demographic = db.session.get(Demographic, zip_code)
+    if demographic and demographic.median_income is None and demographic.population is None:
+        return
     if demographic:
         return demographic_to_dict(demographic)
-    table_cells = get_result_table_cells(zip_code)
+    table_cells = get_result_table_cells(zip_code, page)
     values = table_values(table_cells)
     if values:
         parsed = table_parse(values)
