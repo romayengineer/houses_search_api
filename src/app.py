@@ -105,7 +105,7 @@ def import_csv():
 @app.cli.command("download-csv")
 def download_s3_csv():
     url = "https://getgloby-realtor-challenge.s3.us-east-1.amazonaws.com/realtor-data.csv"
-    dest_path = "realtor-data.csv"
+    dest_path = os.path.join(basedir, "realtor-data.csv")
     print(f"Downloading {url}...")
     # stream=True allows us to download the file in pieces
     with requests.get(url, stream=True) as r:
@@ -138,7 +138,7 @@ def api_get_house_by_property():
 
 @app.route('/properties/<string:house_id>', methods=['GET'])
 def get_property_by_id(house_id):
-    house = House.query.get(house_id)
+    house = db.session.get(House, house_id)
 
     if not house:
         return jsonify({"error": "Property not found"}), 404
@@ -154,7 +154,7 @@ def get_property_by_id(house_id):
 @app.route('/demographics/<string:zip_code>', methods=['GET'])
 def api_get_demographic(zip_code):
     demographic = get_demographic(zip_code)
-    if demographic:
+    if demographic and demographic.get("median_income") is not None:
         return jsonify({"result": demographic})
     else:
         return jsonify({"error": f"no data found for zip_code {zip_code}"}), 404

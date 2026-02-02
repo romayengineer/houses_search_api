@@ -86,7 +86,7 @@ def get_house_by_property():
 
     # as requirements only filters by demographics if state_code is given
     if request.args.get("state_code") is not None:
-        zips = get_zips_by_demographics()
+        zips = get_zips_by_demographics(request.args)
         query = query.filter(House.zip_code.in_(zips))
 
     # supports pagination

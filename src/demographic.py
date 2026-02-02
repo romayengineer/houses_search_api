@@ -47,7 +47,7 @@ def demographic_to_dict(demographic):
     }
 
 def get_demographic(zip_code):
-    demographic = Demographic.query.get(zip_code)
+    demographic = db.session.get(Demographic, zip_code)
     if demographic:
         return demographic_to_dict(demographic)
     table_cells = get_result_table_cells(zip_code)
