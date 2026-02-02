@@ -61,14 +61,15 @@ pytest --cov=src
 
 Name                 Stmts   Miss  Cover
 ----------------------------------------
-src/app.py             113    113     0%
+src/__init__.py          0      0   100%
+src/app.py             113     74    35%
 src/browser.py           8      6    25%
 src/conf.py             15      2    87%
 src/demographic.py      41      1    98%
-src/house.py            59     35    41%
-src/zipwho.py           52     15    71%
+src/house.py            60      4    93%
+src/zipwho.py           52      0   100%
 ----------------------------------------
-TOTAL                  288    172    40%
+TOTAL                  289     87    70%
 ```
 
 ## API endpoints
