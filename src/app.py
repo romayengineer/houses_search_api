@@ -125,7 +125,7 @@ def api_get_zips_by_demographics():
 
 @app.route('/properties', methods=['GET'])
 def api_get_house_by_property():
-    pagination = get_house_by_property()
+    pagination = get_house_by_property(request.args)
     return jsonify({
         "total": pagination.total,
         "pages": pagination.pages,

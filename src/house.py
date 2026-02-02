@@ -43,9 +43,9 @@ def house_to_dict(house):
         "price_per_sq_ft": house.price_per_sq_ft,
     }
 
-def filter_by_range(query, name, type):
-    min_value = request.args.get(f'min_{name}', type=type)
-    max_value = request.args.get(f'max_{name}', type=type)
+def filter_by_range(args, query, name, type):
+    min_value = args.get(f'min_{name}', type=type)
+    max_value = args.get(f'max_{name}', type=type)
 
     if min_value is not None:
         query = query.filter(getattr(House, name) >= min_value)
@@ -54,44 +54,44 @@ def filter_by_range(query, name, type):
 
     return query
 
-def filter_by_exact_match(query, name, type):
-    value = request.args.get(name, type=type)
+def filter_by_exact_match(args, query, name, type):
+    value = args.get(name, type=type)
 
     if value is not None:
         query = query.filter(getattr(House, name) == value)
 
     return query
 
-def get_house_by_property():
+def get_house_by_property(args):
     query = House.query
 
-    status = request.args.get('status', type=str)
+    status = args.get('status', type=str)
     if not status:
         return jsonify({"error": "The 'status' argument is required."}), 400
     query = query.filter(House.status == status)
 
-    query = filter_by_range(query, "price", float)
-    query = filter_by_range(query, "bed", int)
-    query = filter_by_range(query, "bath", int)
-    query = filter_by_range(query, "acre_lot", int)
-    query = filter_by_range(query, "price_per_acre", int)
-    query = filter_by_range(query, "house_size", int)
-    query = filter_by_range(query, "price_per_sqft", int)
+    query = filter_by_range(args, query, "price", float)
+    query = filter_by_range(args, query, "bed", int)
+    query = filter_by_range(args, query, "bath", int)
+    query = filter_by_range(args, query, "acre_lot", int)
+    query = filter_by_range(args, query, "price_per_acre", int)
+    query = filter_by_range(args, query, "house_size", int)
+    query = filter_by_range(args, query, "price_per_sqft", int)
 
-    query = filter_by_exact_match(query, "city", type=str)
-    query = filter_by_exact_match(query, "state", type=str)
-    query = filter_by_exact_match(query, "zip_code", type=str)
+    query = filter_by_exact_match(args, query, "city", type=str)
+    query = filter_by_exact_match(args, query, "state", type=str)
+    query = filter_by_exact_match(args, query, "zip_code", type=str)
     # state_code is required for demographics search
-    query = filter_by_exact_match(query, "state_code", type=str)
+    query = filter_by_exact_match(args, query, "state_code", type=str)
 
     # as requirements only filters by demographics if state_code is given
-    if request.args.get("state_code") is not None:
-        zips = get_zips_by_demographics(request.args)
+    if args.get("state_code") is not None:
+        zips = get_zips_by_demographics(args)
         query = query.filter(House.zip_code.in_(zips))
 
     # supports pagination
-    page = request.args.get('page', 1, type=int)
-    per_page = request.args.get('per_page', 20, type=int)
+    page = args.get('page', 1, type=int)
+    per_page = args.get('per_page', 20, type=int)
     pagination = query.paginate(page=page, per_page=per_page, max_per_page=500)
 
     return pagination
