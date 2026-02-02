@@ -26,13 +26,15 @@ pip install -r requirements
 playwright install chromium
 ```
 
-## Create database
+## Flask commands
+
+### Create database
 
 ```sh
 flask init-db
 ```
 
-## download the CSV file
+### download the CSV file
 
 ```sh
 flask download-csv
@@ -40,7 +42,7 @@ flask download-csv
 
 it downloads the file into `realtor-data.csv`
 
-## Import CSV file
+### Import CSV file
 
 the csv file has to be in the root of the app and have the name `realtor-data.csv`
 
@@ -52,6 +54,14 @@ it takes 50 seconds to import +2 million rows
 
 Import finished: 2224561 added
 flask import-csv  36,37s user 12,67s system 98% cpu 49,705 total
+
+### Scrapp zip codes
+
+this loops over all the unique zip codes in the house table and scraps all the demographic data for those zip codes from zipwho.com
+
+```sh
+flask scrap-zip
+```
 
 ## Run tests
 
@@ -102,6 +112,44 @@ it supports the following arguments for filtering
 - `state`
 - `state_code` - required for demographics search
 - `zip_code`
+
+it also filters by demographic data and supports these arguments
+- `min_median_income`
+- `max_median_income`
+- `min_cost_of_living_index`
+- `max_cost_of_living_index`
+- `min_median_mortgage_to_income_ratio`
+- `max_median_mortgage_to_income_ratio`
+- `min_owner_occupied_homes`
+- `max_owner_occupied_homes`
+- `min_median_rooms_in_home`
+- `max_median_rooms_in_home`
+- `min_college_degree`
+- `max_college_degree`
+- `min_professional`
+- `max_professional`
+- `min_population`
+- `max_population`
+- `min_average_household_size`
+- `max_average_household_size`
+- `min_median_age`
+- `max_median_age`
+- `min_male_to_female_ratio`
+- `max_male_to_female_ratio`
+- `min_married`
+- `max_married`
+- `min_divorced`
+- `max_divorced`
+- `min_white`
+- `max_white`
+- `min_black`
+- `max_black`
+- `min_asian`
+- `max_asian`
+- `min_hispanic_ethnicity`
+- `max_hispanic_ethnicity`
+- `min_zip_code`
+- `max_zip_code`
 
 ## Features
 
